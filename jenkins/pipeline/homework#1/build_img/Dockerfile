@@ -6,7 +6,7 @@ RUN apt-get update
 # Install maven 3.8.5
 RUN apt-get -y install ca-certificates curl
 RUN mkdir -p /usr/local/apache-maven/apache-maven-3.8.5 && \
-    wget https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz && \
+    wget https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz --no-check-certificate && \
     tar -xvf apache-maven-3.8.5-bin.tar.gz -C /usr/local/apache-maven/apache-maven-3.8.5 && \
     rm apache-maven-3.8.5-bin.tar.gz
 ENV PATH=$PATH:/opt/apache-maven-3.8.5/bin
