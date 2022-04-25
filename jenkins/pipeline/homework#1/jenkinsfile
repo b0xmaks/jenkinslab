@@ -1,1 +1,20 @@
-https://github.com/b0xmaks/jenkinslab/blob/master/jenkins/pipeline/homework%231/jenkinsfile
+pipeline {
+    agent {
+
+        docker {
+            image '10.70.70.30:8123/buildimage'
+            args "-v  /var/run/docker.sock:/var/run/docker.sock"
+        }
+    }
+    stages {
+        stage('Get app from repository && build app && make docker image') {
+            steps {
+                git(url: 'https://github.com/b0xmaks/jenkinslab.git')
+                sh 'cd ${WORKSPACE}'
+                sh 'mvn package -Dmaven.test.skip -T 1C'
+                sh 'cd ${WORKSPACE}/jenkins/pipeline/homework#1/prod_img/ && docker build --tag=appimage .'
+                sh '''docker tag appimage 10.70.70.30:8123/appimage && docker push 10.70.70.30:8123/appimage'''
+            }
+        }
+    }
+}
