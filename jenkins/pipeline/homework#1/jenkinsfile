@@ -3,7 +3,7 @@ pipeline {
 
         docker {
             image '10.70.70.30:8123/buildimage'
-            args "-u root -v  /var/run/docker.sock:/var/run/docker.sock"
+            args "-v /var/run/docker.sock:/var/run/docker.sock"
         }
     }
     stages {
