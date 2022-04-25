@@ -12,6 +12,7 @@ pipeline {
                 git(url: 'https://github.com/b0xmaks/jenkinslab.git')
                 sh 'cd ${WORKSPACE}'
                 sh 'mvn package -Dmaven.test.skip -T 1C'
+                sh 'cp ${WORKSPACE}/target/*.war cd ${WORKSPACE}/jenkins/pipeline/homework#1/prod_img/'
                 sh 'cd ${WORKSPACE}/jenkins/pipeline/homework#1/prod_img/ && docker build --tag=appimage .'
                 sh '''docker tag appimage 10.70.70.30:8123/appimage && docker push 10.70.70.30:8123/appimage'''
             }
