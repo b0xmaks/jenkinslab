@@ -6,16 +6,34 @@ pipeline {
             args "-u root -v  /var/run/docker.sock:/var/run/docker.sock"
         }
     }
+    environment {
+       NEXUS_URL = "10.70.70.30:8123"
+    }
     stages {
-        stage('Get app from repository && build app && make docker image') {
+        stage('Get app from repository && build app') {
             steps {
                 git(url: 'https://github.com/b0xmaks/jenkinslab.git')
                 sh 'cd ${WORKSPACE}'
                 sh 'mvn package -Dmaven.test.skip -T 1C'
+
+            }
+        }
+
+        stage("docker login") {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus_id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                sh '''
+	    	    docker login ${NEXUS_URL} -u $USERNAME -p $PASSWORD
+                '''
+                }
+            }
+        }
+        stage('make docker image && push to nexus') {
+            steps {
                 sh 'cp ${WORKSPACE}/target/*.war ${WORKSPACE}/jenkins/pipeline/homework#1/prod_img/'
                 sh 'cd ${WORKSPACE}/jenkins/pipeline/homework#1/prod_img/ && docker build --tag=appimage .'
                 sh '''docker tag appimage 10.70.70.30:8123/appimage && docker push 10.70.70.30:8123/appimage'''
             }
-        }
+        }        
     }
 }
